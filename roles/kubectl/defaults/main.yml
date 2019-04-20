@@ -1,0 +1,5 @@
+---
+kubernetes_version: v1.14.1
+kubectl_tarball: kubernetes-client-linux-amd64.tar.gz
+kubectl_tarball_checksum: "sha512:66c3a470caecfb35ce9a995a6298e689aed5fabefbdb8aca5086adff572266ae47b997eea03ff3ce0272fdb5be8e22aced3e3ae35906b5ac90cf928d7c0c974f"
+kubectl_version_target: "Client Version: {{kubernetes_version}}"

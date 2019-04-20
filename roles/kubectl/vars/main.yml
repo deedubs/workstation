@@ -1,0 +1,2 @@
+---
+kubectl_download_location: "https://dl.k8s.io/{{kubernetes_version}}/{{kubectl_tarball}}"

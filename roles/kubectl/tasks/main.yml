@@ -1,0 +1,36 @@
+---
+- name: Register the current kubectl version (if any)
+  become: false
+  command: ~/bin/kubectl version --client=true --short
+  ignore_errors: yes
+  register: kubectl_version
+  changed_when: false
+
+- name: Download the kubectl tarball
+  get_url:
+    url: "{{ kubectl_download_location }}"
+    dest: /usr/local/src/{{ kubectl_tarball }}
+    checksum: "{{ kubectl_tarball_checksum }}"
+  when: kubectl_version is failed or kubectl_version.stdout != kubectl_version_target
+
+- name: Extract the kubectl tarball if kubectl is not yet installed or not the desired version
+  become: false
+  unarchive:
+    src: /usr/local/src/{{ kubectl_tarball }}
+    dest: ~/bin
+    copy: no
+    extra_opts:
+      - --strip-components=3
+  when: kubectl_version is failed or kubectl_version.stdout != kubectl_version_target
+
+- name: Register kubectl completion
+  become: false
+  command: ~/bin/kubectl completion bash
+  register: kubectl_completion
+
+- name: Add kubectl completion to .profile.d/minikube.sh
+  become: false
+  copy:
+    content: "{{ kubectl_completion.stdout }}"
+    dest: ~/.profile.d/kubectl.src
+    mode: 0700
