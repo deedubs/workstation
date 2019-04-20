@@ -1,0 +1,28 @@
+---
+- name: Register the current minikube version (if any)
+  become: false
+  command: ~/bin/minikube version
+  ignore_errors: yes
+  register: minikube_version
+  changed_when: false
+
+- name: Download the minikube bin
+  become: false
+  get_url:
+    url: "{{ minikube_download_location }}"
+    dest: ~/bin/minikube
+    checksum: "{{ minikube_bin_checksum }}"
+    mode: 0700
+  when: minikube_version is failed or minikube_version.stdout != minikube_version_target
+
+- name: Register minikube completion
+  become: false
+  command: ~/bin/minikube completion bash
+  register: minikube_completion
+
+- name: Add minikube completion to .profile.d/minikube.sh
+  become: false
+  copy:
+    content: "{{ minikube_completion.stdout }}"
+    dest: ~/.profile.d/minikube.src
+    mode: 0700
