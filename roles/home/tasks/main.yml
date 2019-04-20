@@ -1,0 +1,24 @@
+---
+- name: Create $HOME/bin directory
+  become: false
+  file: 
+    path: "{{ lookup('env','HOME') }}/bin"
+    mode: 0700
+    state: directory
+
+- name: Create $HOME/.profile.d directory
+  become: false
+  file: 
+    path: "{{ lookup('env','HOME') }}/.profile.d"
+    mode: 0700
+    state: directory
+
+- name: Add ~/bin to PATH for all users
+  copy:
+    src: home-bin.sh
+    dest: /etc/profile.d
+
+- name: Add ~/.profile.d for all users
+  copy:
+    src: home-profile.d.sh
+    dest: /etc/profile.d
